@@ -12,7 +12,7 @@
     <artifactId>spring-redis-ratelimiter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-redis-ratelimiter</name>
-    <description>spring-redis-ratelimiter</description>
+    <description>Annotation-based rate limiting library for Spring Boot using Redis</description>
     <url/>
     <licenses>
         <license/>
@@ -30,24 +30,32 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
+        <!-- Spring Data Redis - Required by library users -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+            <optional>true</optional>
         </dependency>
 
+        <!-- Lettuce Redis Client - Optional, users can choose their own -->
         <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
+            <optional>true</optional>
         </dependency>
 
+        <!-- Spring AOP - Required for @RateLimit annotation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Spring Web - Optional, only needed if using RateLimitExceptionHandler -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

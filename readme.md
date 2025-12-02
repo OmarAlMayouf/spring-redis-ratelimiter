@@ -15,6 +15,17 @@ A lightweight, annotation-based rate limiting library for **Spring Boot** that u
 
 ---
 
+## ⚠️ Prerequisites
+
+Before using this library, you **MUST** have:
+
+1. **Redis server** running and accessible
+2. **Redis configuration** in your Spring Boot application
+
+This library **only provides rate limiter components**. It expects `RedisTemplate<String, Object>` to be available in your application context.
+
+---
+
 ## 📦 Installation
 
 ### Maven
@@ -25,6 +36,12 @@ A lightweight, annotation-based rate limiting library for **Spring Boot** that u
     <artifactId>spring-redis-ratelimiter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
+
+<!-- Required: Spring Data Redis -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
 ```
 
 ### Gradle
@@ -32,6 +49,7 @@ A lightweight, annotation-based rate limiting library for **Spring Boot** that u
 ```gradle
 dependencies {
     implementation 'io.github.OmarAlMayouf:spring-redis-ratelimiter:0.0.1-SNAPSHOT'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 ```
 
@@ -39,9 +57,9 @@ dependencies {
 
 ## 🎯 Quick Start
 
-### 1. Add Redis Configuration
+### 1. **REQUIRED:** Configure Redis in Your Application
 
-Create a Redis configuration class in your application:
+You **must** provide your own Redis configuration. Create a configuration class:
 
 ```java
 @Configuration
@@ -49,7 +67,7 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+        return new LettuceConnectionFactory("localhost", 6379);
     }
 
     @Bean
@@ -57,21 +75,39 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericToStringSerializer<>(Object.class));
+        template.setHashValueSerializer(new GenericToStringSerializer<>(Object.class));
         template.afterPropertiesSet();
         return template;
     }
 }
 ```
 
-### 2. Configure Redis Connection
+### 2. **REQUIRED:** Configure Redis Connection Properties
 
-Add to `application.properties`:
+Add to your `application.properties` or `application.yml`:
 
 ```properties
 spring.data.redis.host=localhost
 spring.data.redis.port=6379
+spring.data.redis.timeout=60000
+
+# Enable AspectJ for @RateLimit annotation
 spring.aop.proxy-target-class=true
+```
+
+Or for `application.yml`:
+
+```yaml
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 60000
+  aop:
+    proxy-target-class: true
 ```
 
 ### 3. Apply Rate Limiting
@@ -435,52 +471,6 @@ public class RedisConfig {
 - **Throughput:** Thousands of checks per second
 - **Storage:** Minimal - one key per identifier with automatic expiration
 - **Scalability:** Horizontal scaling supported (distributed rate limiting)
-
----
-
-## ⚠️ Prerequisites
-
-Your project **must** have Redis configured with the following beans:
-
-- `RedisConnectionFactory`
-- `RedisTemplate<String, Object>`
-
-**Note:** This library does **not** auto-configure Redis to avoid conflicts with your existing configuration.
-
----
-
-## 📦 Dependencies
-
-The library requires:
-
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis</artifactId>
-</dependency>
-
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-aop</artifactId>
-</dependency>
-
-<dependency>
-    <groupId>io.lettuce</groupId>
-    <artifactId>lettuce-core</artifactId>
-</dependency>
-```
-
----
-
-## 🔒 Thread Safety
-
-✅ **Fully thread-safe** using Redis atomic operations.
-
-Works correctly in:
-- Multi-threaded environments
-- Distributed systems (multiple instances)
-- High-concurrency scenarios
-- Microservices architectures
 
 ---
 

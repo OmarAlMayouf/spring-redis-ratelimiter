@@ -1,10 +1,21 @@
 # 🎯 Usage Guide - Spring Redis Rate Limiter
 
+## ⚠️ Prerequisites
+
+Before using this library, you **MUST** have:
+
+1. **Redis server** running and accessible
+2. **Redis configuration** in your Spring Boot application
+
+**Important:** This library **only provides rate limiter components**. It expects `RedisTemplate<String, Object>` to be available in your application context. You are responsible for configuring Redis connection.
+
+---
+
 ## Quick Start
 
-### 1. Add Redis Configuration (Required)
+### 1. **REQUIRED:** Add Redis Configuration
 
-Create a Redis configuration class in your application:
+Create a Redis configuration class **in your application** (not provided by this library):
 
 ```java
 @Configuration
@@ -12,7 +23,7 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+        return new LettuceConnectionFactory("localhost", 6379);
     }
 
     @Bean
@@ -20,21 +31,39 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericToStringSerializer<>(Object.class));
+        template.setHashValueSerializer(new GenericToStringSerializer<>(Object.class));
         template.afterPropertiesSet();
         return template;
     }
 }
 ```
 
-### 2. Configure Redis Connection
+### 2. **REQUIRED:** Configure Redis Connection
 
-Add to `application.properties`:
+Add to your `application.properties`:
 
 ```properties
 spring.data.redis.host=localhost
 spring.data.redis.port=6379
+spring.data.redis.timeout=60000
+
+# Enable AspectJ for @RateLimit annotation
 spring.aop.proxy-target-class=true
+```
+
+Or for `application.yml`:
+
+```yaml
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 60000
+  aop:
+    proxy-target-class: true
 ```
 
 ### 3. Apply Rate Limiting
@@ -365,4 +394,3 @@ This is a production-ready rate limiting library. Feel free to extend it for you
 ## 📄 License
 
 See LICENSE file for details.
-
