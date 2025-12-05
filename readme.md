@@ -1,6 +1,6 @@
-# 📦 spring-redis-ratelimiter
+# 📦 Spring Redis Rate Limiter
 
-A **lightweight, annotation-based rate limiting library** for Spring Boot using Redis to protect endpoints from abuse (OTP spam, login throttling, IP limiting, etc.).
+An **Open-Source, lightweight, annotation-based rate limiting library** for Spring Boot using Redis to protect endpoints from abuse (OTP spam, login throttling, IP limiting, etc.).
 
 ---
 
