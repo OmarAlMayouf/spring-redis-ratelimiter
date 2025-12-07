@@ -49,7 +49,6 @@ public class SpELKeyResolver {
 
     /**
      * Gets parameter names from method.
-     * Note: In production, you might want to use Spring's ParameterNameDiscoverer
      * or compile with -parameters flag to get actual parameter names.
      */
     private static String[] getParameterNames(Method method) {

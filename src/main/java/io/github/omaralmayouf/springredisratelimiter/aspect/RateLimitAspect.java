@@ -1,7 +1,9 @@
 package io.github.omaralmayouf.springredisratelimiter.aspect;
 
 import io.github.omaralmayouf.springredisratelimiter.annotation.RateLimit;
+import io.github.omaralmayouf.springredisratelimiter.exception.BlacklistedSourceException;
 import io.github.omaralmayouf.springredisratelimiter.service.RateLimiterService;
+import io.github.omaralmayouf.springredisratelimiter.service.WhitelistBlacklistService;
 import io.github.omaralmayouf.springredisratelimiter.util.SpELKeyResolver;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -13,16 +15,19 @@ import java.lang.reflect.Method;
 
 /**
  * Aspect that intercepts methods annotated with @RateLimit
- * and enforces rate limiting rules.
+ * and enforces rate limiting rules with whitelist/blacklist support.
  */
 @Aspect
 @Component
 public class RateLimitAspect {
 
     private final RateLimiterService rateLimiterService;
+    private final WhitelistBlacklistService whitelistBlacklistService;
 
-    public RateLimitAspect(RateLimiterService rateLimiterService) {
+    public RateLimitAspect(RateLimiterService rateLimiterService,
+                          WhitelistBlacklistService whitelistBlacklistService) {
         this.rateLimiterService = rateLimiterService;
+        this.whitelistBlacklistService = whitelistBlacklistService;
     }
 
     @Around("@annotation(rateLimit)")
@@ -38,6 +43,12 @@ public class RateLimitAspect {
 
         // Resolve the identifier from SpEL expression
         String identifier = resolveIdentifier(rateLimit.key(), method, args);
+
+        // Check blacklist first if blacklisted, block immediately
+        if (whitelistBlacklistService.isBlacklisted(identifier, bucketName)) throw new BlacklistedSourceException(identifier, bucketName);
+
+        // Check whitelist if whitelisted, bypass rate limiting
+        if (whitelistBlacklistService.isWhitelisted(identifier, bucketName)) return joinPoint.proceed();
 
         // Build Redis key
         String redisKey = rateLimiterService.buildKey(bucketName, identifier);
