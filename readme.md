@@ -1,21 +1,21 @@
-# 📦 Spring Redis Rate Limiter
+# Spring Redis Rate Limiter
 
 An **Open-Source, lightweight, annotation-based rate limiting library** for Spring Boot using Redis to protect endpoints from abuse (OTP spam, login throttling, IP limiting, etc.).
 
 ---
 
-## 🚀 Features
+## Features
 
-* ✅ **Annotation-based**: Add `@RateLimit` to any method
-* ✅ **SpEL support**: Dynamic keys using `#phone`, `#email`, `#user.id`, `#p0`, etc.
-* ✅ **Fixed-window algorithm**: Uses Redis atomic `INCR` + `EXPIRE`
-* ✅ **Distributed-ready**: Works across multiple instances
-* ✅ **Thread-safe**: High concurrency safe
-* ✅ **Production-ready**: Exception handling + HTTP 429 responses
+* **Annotation-based**: Add `@RateLimit` to any method
+* **SpEL support**: Dynamic keys using `#phone`, `#email`, `#user.id`, `#p0`, etc.
+* **Fixed-window algorithm**: Uses Redis atomic `INCR` + `EXPIRE`
+* **Distributed-ready**: Works across multiple instances
+* **Thread-safe**: High concurrency safe
+* **Production-ready**: Exception handling + HTTP 429 responses
 
 ---
 
-## ⚠️ Prerequisites
+## Prerequisites
 
 Before using:
 
@@ -25,7 +25,7 @@ Before using:
 
 ---
 
-## 📦 Installation (v1.0.2)
+## Installation (v1.0.2)
 
 **Maven**
 
@@ -61,7 +61,7 @@ implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 ---
 
-## ⚙️ Redis Configuration
+## Redis Configuration
 
 **Option A: application.yml**
 
@@ -101,7 +101,7 @@ public class RedisConfig {
 
 ---
 
-## 🔍 Component Scanning
+## Component Scanning
 
 ```java
 @SpringBootApplication(scanBasePackages = {
@@ -117,7 +117,7 @@ public class YourApplication {
 
 ---
 
-## 🎯 Applying Rate Limiting
+## Applying Rate Limiting
 
 ```java
 @PostMapping("/send-otp")
@@ -134,7 +134,7 @@ public String sendOtp(@RequestParam String phone) {
 
 ---
 
-## 🚨 Optional: Global Exception Handler
+## Optional: Global Exception Handler
 
 ```java
 @RestControllerAdvice
@@ -157,7 +157,7 @@ public class RateLimitExceptionHandler {
 
 ---
 
-## ✅ Checklist
+## Checklist
 
 * Redis server running (`docker run -d -p 6379:6379 redis:latest`)
 * `spring-boot-starter-data-redis` added
@@ -168,7 +168,7 @@ public class RateLimitExceptionHandler {
 
 ---
 
-## 🎯 Quick Examples
+## Quick Examples
 
 ```java
 // OTP: 3 per phone/minute
@@ -189,7 +189,7 @@ public String getPublicData() { ... }
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 | Issue                         | Solution                                                            |
 | ----------------------------- | ------------------------------------------------------------------- |
