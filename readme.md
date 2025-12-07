@@ -4,6 +4,13 @@ An **Open-Source, lightweight, annotation-based rate limiting library** for Spri
 
 ---
 
+## Example use cases:
+* Rate limiting per user, email, IP, or custom identifier
+* Protecting login endpoints from brute-force attacks
+* Throttling API requests in multi-instance deployments
+
+---
+
 ## Features
 
 * **Annotation-based**: Add `@RateLimit` to any method
