@@ -2,6 +2,7 @@
 
 An **Open-Source, lightweight, annotation-based rate limiting library** for Spring Boot using Redis to protect endpoints from abuse (OTP spam, login throttling, IP limiting, etc.).
 
+> Please note that this library is under constant improvment
 ---
 
 ## Example use cases:
